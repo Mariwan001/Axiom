@@ -5,7 +5,7 @@ const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [windowWidth, setWindowWidth] = useState(0);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [activeLink, setActiveLink] = useState(null);
+  const [activeLink, setActiveLink] = useState<string | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
@@ -41,7 +41,7 @@ const Navbar = () => {
   }, []);
 
   // Updated breakpoint logic for iPad
-  const isIPad = /iPad|Macintosh/i.test(navigator.userAgent) && 'ontouchend' in document;
+  const isIPad = typeof navigator !== 'undefined' ? /iPad|Macintosh/i.test(navigator.userAgent) && 'ontouchend' in document : false;
   const isDesktop = isIPad ? windowWidth >= 1024 : windowWidth >= 768;
 
   const navbarStyle = {
