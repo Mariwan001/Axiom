@@ -3,6 +3,12 @@
 import React, { useState, useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 
+type Card = {
+  title: string;
+  src: string;
+  description?: string;
+};
+
 export const Card = React.memo(
   ({
     card,
@@ -12,7 +18,7 @@ export const Card = React.memo(
     isVisible,
     animationDelay,
   }: {
-    card: any;
+    card: Card;
     index: number;
     hovered: number | null;
     setHovered: React.Dispatch<React.SetStateAction<number | null>>;
@@ -44,7 +50,7 @@ export const Card = React.memo(
         )}
       >
         <h3 className="text-xl md:text-2xl font-bold text-white overflow-hidden">
-          {card.title.split('').map((char, charIndex) => (
+          {card.title.split('').map((char: string, charIndex: number) => (
             <span
               key={charIndex}
               className={cn(
@@ -81,12 +87,6 @@ export const Card = React.memo(
 );
 
 Card.displayName = "Card";
-
-type Card = {
-  title: string;
-  src: string;
-  description?: string;
-};
 
 export function FocusCards({ cards }: { cards: Card[] }) {
   const [hovered, setHovered] = useState<number | null>(null);
