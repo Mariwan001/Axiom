@@ -103,6 +103,13 @@ export type AccordionItemProps = {
   className?: string;
 };
 
+// Define an interface for the props accepted by accordion item children
+interface AccordionItemChildProps {
+  value?: React.Key; 
+  expanded?: boolean;
+  [key: string]: any; // Allow other props
+}
+
 function AccordionItem({ value, children, className }: AccordionItemProps) {
   const { expandedValue } = useAccordion();
   const isExpanded = value === expandedValue;
@@ -113,9 +120,9 @@ function AccordionItem({ value, children, className }: AccordionItemProps) {
       {...(isExpanded ? { 'data-expanded': '' } : {'data-closed': ''})}
     >
       {React.Children.map(children, (child) => {
-        if (React.isValidElement(child)) {
+        if (React.isValidElement<AccordionItemChildProps>(child)) {
           return React.cloneElement(child, {
-            ...(child.props as Record<string, unknown>),
+            ...child.props,
             value,
             expanded: isExpanded,
           });
@@ -129,20 +136,24 @@ function AccordionItem({ value, children, className }: AccordionItemProps) {
 export type AccordionTriggerProps = {
   children: ReactNode;
   className?: string;
+  value?: React.Key;
+  expanded?: boolean;
 };
 
 function AccordionTrigger({
   children,
   className,
+  value,
+  expanded,
   ...props
 }: AccordionTriggerProps) {
   const { toggleItem, expandedValue } = useAccordion();
-  const value = (props as { value?: React.Key }).value;
-  const isExpanded = value === expandedValue;
+  const itemValue = value !== undefined ? value : (props as { value?: React.Key }).value;
+  const isExpanded = expanded !== undefined ? expanded : itemValue === expandedValue;
 
   return (
     <button
-      onClick={() => value !== undefined && toggleItem(value)}
+      onClick={() => itemValue !== undefined && toggleItem(itemValue)}
       aria-expanded={isExpanded}
       type='button'
       className={cn('group', className)}
@@ -156,16 +167,20 @@ function AccordionTrigger({
 export type AccordionContentProps = {
   children: ReactNode;
   className?: string;
+  value?: React.Key;
+  expanded?: boolean;
 };
 
 function AccordionContent({
   children,
   className,
+  value,
+  expanded,
   ...props
 }: AccordionContentProps) {
   const { expandedValue, variants } = useAccordion();
-  const value = (props as { value?: React.Key }).value;
-  const isExpanded = value === expandedValue;
+  const itemValue = value !== undefined ? value : (props as { value?: React.Key }).value;
+  const isExpanded = expanded !== undefined ? expanded : itemValue === expandedValue;
 
   const BASE_VARIANTS: Variants = {
     expanded: { height: 'auto', opacity: 1 },
